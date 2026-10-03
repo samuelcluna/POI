@@ -1,0 +1,15 @@
+[Unit]
+Description=POI - aplicação @APP@
+After=network.target
+
+[Service]
+User=@USER@
+WorkingDirectory=@APP_DIR@
+Environment=PORT=8000
+Environment=DATA_DIR=@APP_DIR@/data
+ExecStart=@APP_DIR@/.venv/bin/python -m poi.run @APP@
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

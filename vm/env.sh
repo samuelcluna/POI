@@ -1,10 +1,8 @@
-# Variáveis e funções usadas pelos scripts de VM.
 VM_NAME="${VM_NAME:-poi-vm}"
 VDI="${VDI:-/tmp/ubuntu_serve_2204_poi.vdi}"
 VM_BASEDIR="${VM_BASEDIR:-/tmp}"
 VM_USER="${VM_USER:-osboxes}"
 VM_PASS="${VM_PASS:-osboxes.org}"
-# portas no hospedeiro -> 22 e 8000 da VM
 SSH_PORT="${SSH_PORT:-2222}"
 APP_PORT="${APP_PORT:-8000}"
 VM_APP_DIR="/home/$VM_USER/poi"
@@ -18,7 +16,7 @@ vm_sudo() { vm_ssh "echo '$VM_PASS' | sudo -S -p '' $*"; }
 
 vm_running() { VBoxManage list runningvms | grep -q "\"$VM_NAME\""; }
 
-wait_for() { # wait_for <segundos> <descrição> <comando...>
+wait_for() {
   local timeout="$1" what="$2" start=$SECONDS
   shift 2
   until "$@" >/dev/null 2>&1; do

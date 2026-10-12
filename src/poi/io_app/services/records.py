@@ -6,7 +6,6 @@ from poi.common.settings import data_dir, env_int
 
 def _connect() -> sqlite3.Connection:
     conn = sqlite3.connect(data_dir() / "records.db", timeout=30)
-    # commit só retorna depois do fsync
     conn.execute("PRAGMA synchronous=FULL")
     return conn
 

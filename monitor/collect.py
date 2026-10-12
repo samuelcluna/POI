@@ -17,7 +17,6 @@ MB = 1024 * 1024
 
 
 def find_app_processes(match: str, known: dict[int, psutil.Process]) -> dict[int, psutil.Process]:
-    # reaproveita os objetos Process: cpu_percent() mede em relação à chamada anterior
     found: dict[int, psutil.Process] = {}
     for proc in psutil.process_iter(["cmdline"]):
         if match not in (proc.info["cmdline"] or []):
@@ -56,7 +55,6 @@ def main() -> None:
     ]
 
     procs: dict[int, psutil.Process] = {}
-    # primeira chamada só marca o ponto de partida
     psutil.cpu_percent(percpu=True)
     psutil.cpu_times_percent()
     disk_prev = psutil.disk_io_counters()

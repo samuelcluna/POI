@@ -58,7 +58,6 @@ for scenario in $SCENARIOS; do
   for rate in $RATES; do
     OUT="$ROOT/results/$APP/$LABEL/${rate}rps"
     mkdir -p "$OUT"
-    # se o nível anterior derrubou a app (OOM), espera ela voltar
     wait_for 120 "aplicação em /health" curl -fsS "$BASE_URL/health"
     [ "$APP" = memory ] && curl -fsS -X DELETE "$BASE_URL/cache" >/dev/null
 

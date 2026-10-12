@@ -31,7 +31,6 @@ def _write_synced(path: Path, data: bytes, repeat: int = 1) -> None:
 
 
 def _drop_page_cache(fd: int) -> None:
-    # descarta o page cache do arquivo para a leitura ir ao disco
     if hasattr(os, "posix_fadvise"):
         os.posix_fadvise(fd, 0, 0, os.POSIX_FADV_DONTNEED)
 
@@ -42,7 +41,6 @@ def seed() -> None:
     file_bytes = env_int("IO_SEED_FILE_KB", 1024) * KB
     lines_repeat = env_int("IO_LINES_MB", 16) * 1024 * KB // len(LINE)
 
-    # lock: vários workers sobem ao mesmo tempo
     with open(data_dir() / ".seed.lock", "w") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX)
         for i in range(env_int("IO_SEED_FILES", 32)):

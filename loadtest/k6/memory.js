@@ -7,7 +7,6 @@ export const options = buildOptions();
 const ALLOC_MB = __ENV.ALLOC_MB || '64';
 const CACHE_KEYS = parseInt(__ENV.CACHE_KEYS || '200');
 const key = () => `k${Math.floor(Math.random() * CACHE_KEYS)}`;
-// 404 = chave ainda não gravada, não conta como erro
 const hitOrMiss = http.expectedStatuses(200, 404);
 
 const ENDPOINTS = {

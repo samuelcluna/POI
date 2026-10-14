@@ -68,4 +68,4 @@ Não substituem os experimentos na VM.
 
 A app `cpu` satura perto de 35 req/s com 2 workers e a memória fica estável. O uso passa de 200% porque o `/hash` roda em código nativo fora do GIL e ocupa núcleos além de um por worker; na VM o teto é o número de vCPUs. Na app `memory` o
 RSS cresce com a demanda. A medição da app `io` foi feita em ZFS, então as leituras vieram do
-cache e o disco não chegou a limitar; o comportamento IO-bound ainda precisa ser confirmado na VM.
+cache e o disco não chegou a limitar; o comportamento IO-bound foi confirmado na VM (ext4), onde a leitura em disco cresceu com a demanda.

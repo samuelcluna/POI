@@ -1,0 +1,20 @@
+{
+  "app": "io",
+  "endpoint": "mix",
+  "rate_target": 40,
+  "duration": "60s",
+  "requests": 2401,
+  "throughput_rps": 39.995706484729716,
+  "error_rate": 0,
+  "dropped_iterations": 0,
+  "vus_max": 80,
+  "latency_ms": {
+    "avg": 29.00090255518536,
+    "min": 2.016988,
+    "p50": 18.665046,
+    "p90": 67.081752,
+    "p95": 91.226366,
+    "p99": 127.082614,
+    "max": 292.840265
+  }
+}

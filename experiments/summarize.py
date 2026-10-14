@@ -51,8 +51,10 @@ def main() -> None:
         latency = {f"latency_{k}_ms": round(v, 2) for k, v in k6["latency_ms"].items() if v is not None}
         rows.append({
             "app": meta["app"], "scenario": meta["scenario"], "cpus": meta["cpus"], "mem_mb": meta["mem_mb"],
+            "disk_mbps": meta.get("disk_mbps", 0),
             "rate_target": meta["rate_target"],
             "throughput_rps": round(k6["throughput_rps"], 2),
+            "goodput_rps": round(k6["throughput_rps"] * (1 - k6["error_rate"]), 2),
             "requests": k6["requests"],
             "error_rate": round(k6["error_rate"], 4),
             "dropped_iterations": k6["dropped_iterations"],
@@ -60,7 +62,7 @@ def main() -> None:
             **aggregate_vm_metrics(run / "vm_metrics.csv"),
         })
 
-    rows.sort(key=lambda r: (r["cpus"], r["mem_mb"], r["scenario"], r["rate_target"]))
+    rows.sort(key=lambda r: (r["cpus"], r["mem_mb"], r["disk_mbps"], r["scenario"], r["rate_target"]))
     columns = list(dict.fromkeys(key for row in rows for key in row))
     out = root / "summary.csv"
     with open(out, "w", newline="") as f:

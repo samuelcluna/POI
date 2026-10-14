@@ -1,0 +1,20 @@
+{
+  "app": "cpu",
+  "endpoint": "mix",
+  "rate_target": 6,
+  "duration": "60s",
+  "requests": 335,
+  "throughput_rps": 5.115579800435857,
+  "error_rate": 0,
+  "dropped_iterations": 26,
+  "vus_max": 46,
+  "latency_ms": {
+    "avg": 4851.348978504475,
+    "min": 237.098905,
+    "p50": 4935.115628,
+    "p90": 8127.548102600001,
+    "p95": 8771.474799700001,
+    "p99": 10306.94864862,
+    "max": 11322.42471
+  }
+}

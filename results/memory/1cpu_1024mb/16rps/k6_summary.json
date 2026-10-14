@@ -1,0 +1,20 @@
+{
+  "app": "memory",
+  "endpoint": "mix",
+  "rate_target": 16,
+  "duration": "60s",
+  "requests": 960,
+  "throughput_rps": 15.966930203744795,
+  "error_rate": 0,
+  "dropped_iterations": 0,
+  "vus_max": 32,
+  "latency_ms": {
+    "avg": 134.81053897187493,
+    "min": 1.48706,
+    "p50": 88.357996,
+    "p90": 317.43184180000003,
+    "p95": 334.21958114999995,
+    "p99": 383.47042846999955,
+    "max": 438.462774
+  }
+}

@@ -13,13 +13,15 @@ vm/deploy.sh cpu       # ou memory, io
 curl localhost:8000/health
 ```
 
-Se `setup_ssh.sh` não conectar, a imagem está sem servidor SSH. Abra o console da VM pelo
-VirtualBox (login `osboxes`, senha `osboxes.org`) e rode `sudo apt install -y openssh-server`.
+Se `setup_ssh.sh` falhar com `Connection reset by peer`, a imagem veio sem as chaves de host do
+SSH. Abra o console da VM pelo VirtualBox (login `osboxes`, senha `osboxes.org`) e rode
+`sudo ssh-keygen -A && sudo systemctl restart ssh`.
 
 Para mudar o provisionamento manualmente:
 
 ```bash
-vm/configure_vm.sh 2 2048    # 2 vCPUs, 2 GB: desliga, altera e religa a VM
+vm/configure_vm.sh 2 2048       # 2 vCPUs, 2 GB: desliga, altera e religa a VM
+vm/configure_vm.sh 2 1024 20    # idem, com o disco limitado a 20 MB/s
 ```
 
 O serviço `poi-app` (systemd) sobe com a VM e usa um worker por vCPU, então acompanha o cenário

@@ -57,7 +57,7 @@ mesmo que a aplicação não dê conta. Requisições que o k6 não consegue dis
 Deploy e configuração da VM: [vm/README.md](vm/README.md).
 
 ```bash
-experiments/run_experiment.sh cpu            # todos os cenários de experiments/scenarios.env, na VM
+experiments/run_experiment.sh cpu            # todos os cenários de experiments/scenarios/cpu.env, na VM
 experiments/run_experiment.sh cpu --local    # ensaio contra a app rodando nesta máquina
 ```
 

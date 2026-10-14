@@ -1,0 +1,1 @@
+{"app": "io", "scenario": "2cpu_1024mb_disk20mbs", "cpus": 2, "mem_mb": 1024, "disk_mbps": 20, "rate_target": 40, "duration": "60s", "started_at": 1791997583, "ended_at": 1791997676}

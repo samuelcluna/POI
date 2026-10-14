@@ -11,6 +11,9 @@ echo ">> dependências do sistema"
 vm_sudo "apt-get update -qq"
 vm_sudo "DEBIAN_FRONTEND=noninteractive apt-get install -y -qq python3-venv python3-pip"
 
+# atualizações automáticas atrapalham as medições
+vm_sudo "systemctl disable --now unattended-upgrades apt-daily.timer apt-daily-upgrade.timer"
+
 echo ">> código"
 vm_ssh "mkdir -p $VM_APP_DIR"
 tar -C "$ROOT" -czf - pyproject.toml src monitor | vm_ssh "tar -xzf - -C $VM_APP_DIR"

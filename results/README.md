@@ -17,7 +17,8 @@ results/<app>/summary.csv   uma linha por (cenário, demanda), com tudo agregado
 |---|---|
 | `cpus`, `mem_mb` | provisionamento do cenário |
 | `rate_target` | demanda aplicada (req/s) |
-| `throughput_rps` | vazão medida (req/s concluídas) |
+| `throughput_rps` | requisições encerradas por segundo, incluindo as que deram erro ou timeout |
+| `goodput_rps` | vazão útil: requisições respondidas com sucesso por segundo |
 | `error_rate` | fração de requisições com erro ou timeout (30 s) |
 | `dropped_iterations` | requisições que o gerador não conseguiu disparar por falta de VUs livres |
 | `latency_*_ms` | tempo de resposta |
@@ -30,3 +31,4 @@ results/<app>/summary.csv   uma linha por (cenário, demanda), com tudo agregado
 
 `vm_metrics.csv` traz as mesmas grandezas por segundo, além do uso de cada vCPU (`cpuN_pct`).
 Para regenerar o `summary.csv`: `python3 experiments/summarize.py results/<app>`.
+Para gerar os gráficos em `results/<app>/figures/`: `uv run --no-project --with matplotlib python experiments/plot.py results/<app>`.

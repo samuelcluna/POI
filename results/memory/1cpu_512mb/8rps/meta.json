@@ -1,0 +1,1 @@
+{"app": "memory", "scenario": "1cpu_512mb", "cpus": 1, "mem_mb": 512, "disk_mbps": 0, "rate_target": 8, "duration": "60s", "started_at": 1791991877, "ended_at": 1791991942}

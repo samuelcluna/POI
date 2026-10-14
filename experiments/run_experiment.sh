@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
-# Roda todos os cenários x níveis de demanda de experiments/scenarios.env.
+# Roda todos os cenários x níveis de demanda de experiments/scenarios/<app>.env.
 #   experiments/run_experiment.sh <cpu|memory|io>          # na VM (reconfigura a cada cenário)
 #   experiments/run_experiment.sh <cpu|memory|io> --local  # app rodando nesta máquina, sem VM
-# As variáveis do scenarios.env podem ser sobrescritas: RATES="5 10" DURATION=10s ...
+# As variáveis do arquivo de cenários podem ser sobrescritas: RATES="5 10" DURATION=10s ...
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 APP="${1:-}" MODE="${2:-vm}"
 case "$APP" in cpu | memory | io) ;; *) sed -n '2,5p' "$0"; exit 1 ;; esac
 
 overrides="$(for v in SCENARIOS RATES DURATION WARMUP COOLDOWN; do [ -n "${!v:-}" ] && declare -p "$v"; done || true)"
-source "$ROOT/experiments/scenarios.env"
+source "$ROOT/experiments/scenarios/$APP.env"
 eval "$overrides"
 source "$ROOT/vm/env.sh"
 
@@ -45,15 +45,18 @@ trap 'stop_collector /tmp' EXIT
 
 for scenario in $SCENARIOS; do
   if [ "$scenario" = "local" ]; then
-    CPUS="$(nproc)" MEM_MB="$(free -m | awk '/^Mem/ {print $2}')" LABEL="local"
+    CPUS="$(nproc)" MEM_MB="$(free -m | awk '/^Mem/ {print $2}')" DISK_MBPS=0 LABEL="local"
   else
-    CPUS="${scenario%%:*}" MEM_MB="${scenario##*:}" LABEL="${CPUS}cpu_${MEM_MB}mb"
+    IFS=: read -r CPUS MEM_MB DISK_MBPS <<<"$scenario"
+    DISK_MBPS="${DISK_MBPS:-0}"
+    LABEL="${CPUS}cpu_${MEM_MB}mb"
+    [ "$DISK_MBPS" -gt 0 ] && LABEL+="_disk${DISK_MBPS}mbs"
     echo "=== cenário $LABEL ==="
-    "$ROOT/vm/configure_vm.sh" "$CPUS" "$MEM_MB"
+    "$ROOT/vm/configure_vm.sh" "$CPUS" "$MEM_MB" "$DISK_MBPS"
   fi
 
   echo "--- aquecimento ($WARMUP)"
-  "$ROOT/loadtest/run_k6.sh" "$APP" 5 "$WARMUP" "$(mktemp -d)" "$BASE_URL" >/dev/null || true
+  "$ROOT/loadtest/run_k6.sh" "$APP" 2 "$WARMUP" "$(mktemp -d)" "$BASE_URL" >/dev/null || true
 
   for rate in $RATES; do
     OUT="$ROOT/results/$APP/$LABEL/${rate}rps"
@@ -66,8 +69,10 @@ for scenario in $SCENARIOS; do
     "$ROOT/loadtest/run_k6.sh" "$APP" "$rate" "$DURATION" "$OUT" "$BASE_URL" || echo "aviso: k6 terminou com erro em ${rate} req/s" >&2
     stop_collector "$OUT"
 
-    printf '{"app": "%s", "scenario": "%s", "cpus": %s, "mem_mb": %s, "rate_target": %s, "duration": "%s", "started_at": %s, "ended_at": %s}\n' \
-      "$APP" "$LABEL" "$CPUS" "$MEM_MB" "$rate" "$DURATION" "$started" "$(date +%s)" >"$OUT/meta.json"
+    printf '{"app": "%s", "scenario": "%s", "cpus": %s, "mem_mb": %s, "disk_mbps": %s, "rate_target": %s, "duration": "%s", "started_at": %s, "ended_at": %s}\n' \
+      "$APP" "$LABEL" "$CPUS" "$MEM_MB" "$DISK_MBPS" "$rate" "$DURATION" "$started" "$(date +%s)" >"$OUT/meta.json"
+    # descarta a fila que sobrou de um nível com sobrecarga
+    [ "$MODE" = "--local" ] || vm_sudo "systemctl restart poi-app"
     sleep "$COOLDOWN"
   done
 done

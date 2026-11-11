@@ -1,0 +1,34 @@
+x-app: &app
+  restart: unless-stopped
+  pull_policy: always
+
+services:
+  cpu:
+    <<: *app
+    image: samuelclunaa/poi-cpu:latest
+    build: { context: ., args: { APP: cpu } }
+    ports: ["8001:8001"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')"]
+      interval: 15s
+
+  memory:
+    <<: *app
+    image: samuelclunaa/poi-memory:latest
+    build: { context: ., args: { APP: memory } }
+    ports: ["8002:8002"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8002/health')"]
+      interval: 15s
+
+  io:
+    <<: *app
+    image: samuelclunaa/poi-io:latest
+    build: { context: ., args: { APP: io } }
+    ports: ["8003:8003"]
+    volumes:
+      - ${IO_DATA_DIR:-./data}:/app/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8003/health')"]
+      interval: 15s
+      start_period: 60s

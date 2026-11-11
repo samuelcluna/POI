@@ -41,6 +41,19 @@ curl localhost:8001/health
 Variáveis de ambiente: `PORT`, `HOST`, `WORKERS` (padrão: um por CPU; `memory` usa sempre 1 por
 manter estado em memória), `DATA_DIR` (arquivos da app `io`), `CACHE_MAX_MB` (teto do cache da app `memory`).
 
+## Docker
+
+Um único `Dockerfile` gera a imagem de cada app (`--build-arg APP=cpu|memory|io`), e o
+`docker-compose.yml` sobe as três nas mesmas portas (8001, 8002, 8003).
+
+```bash
+docker compose build && docker compose push    # publica no Docker Hub
+docker compose up -d                           # puxa as imagens publicadas e sobe
+```
+
+Na app `io`, os dados ficam no diretório indicado por `IO_DATA_DIR` (padrão `./data`). Na VM da
+nuvem ele aponta para o volume: `IO_DATA_DIR=/mnt/dados/io-data docker compose up -d`.
+
 ## Teste de carga
 
 ```bash

@@ -1,0 +1,32 @@
+# sem estado: escala por réplicas, um worker uvicorn por pod
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cpu
+  namespace: poi
+  labels: { app: cpu }
+spec:
+  replicas: 3
+  selector:
+    matchLabels: { app: cpu }
+  template:
+    metadata:
+      labels: { app: cpu }
+    spec:
+      containers:
+        - name: cpu
+          image: samuelclunaa/poi-cpu:latest
+          env:
+            - { name: WORKERS, value: "1" }
+          ports:
+            - { name: http, containerPort: 8001 }
+          resources:
+            requests: { cpu: 250m, memory: 128Mi }
+            limits: { cpu: "1", memory: 256Mi }
+          readinessProbe:
+            httpGet: { path: /health, port: http }
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: { path: /health, port: http }
+            periodSeconds: 15
+            timeoutSeconds: 5

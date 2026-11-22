@@ -1,0 +1,35 @@
+# o cache fica na memória do processo: uma réplica só, senão cada pod teria um cache diferente
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: memory
+  namespace: poi
+  labels: { app: memory }
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels: { app: memory }
+  template:
+    metadata:
+      labels: { app: memory }
+    spec:
+      containers:
+        - name: memory
+          image: samuelclunaa/poi-memory:latest
+          env:
+            - { name: CACHE_MAX_MB, value: "256" }
+          ports:
+            - { name: http, containerPort: 8002 }
+          resources:
+            # /alloc pede até 512 MB de uma vez, além do cache
+            requests: { cpu: 250m, memory: 512Mi }
+            limits: { cpu: "1", memory: 1Gi }
+          readinessProbe:
+            httpGet: { path: /health, port: http }
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: { path: /health, port: http }
+            periodSeconds: 15
+            timeoutSeconds: 5
